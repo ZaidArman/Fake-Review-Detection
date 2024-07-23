@@ -1,0 +1,4 @@
+django==5.0.6
+selenium==4.23.0
+beautifulsoup4==4.12.3
+request==0.2
