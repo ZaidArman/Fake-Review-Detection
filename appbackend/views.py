@@ -30,3 +30,42 @@ class AnalyzeFakeReviews(APIView):
         products = Product.objects.filter(name__icontains=product_title)
         serializer = self.serializer_class(products, many=True)
         return Response(serializer.data)
+
+
+
+
+
+
+## ML Model view.py work # Zaid
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Product
+from .utils import ReviewClassifier
+
+# Initialize the classifier # Change the file paths
+model_path = '/Users/apple/Downloads/backend/ML_Model/reviews_classification_model.h5'
+tokenizer_path = '/Users/apple/Downloads/backend/ML_Model/tokenizers.pkl'
+max_len = 100 # don't change it
+classifier = ReviewClassifier(model_path, tokenizer_path, max_len)
+
+class ReviewClassificationView(APIView):
+    def get(self, request, *args, **kwargs):
+        keyword = request.GET.get('keyword')
+        if not keyword:
+            return Response({'error': 'Keyword parameter is missing'}, status=status.HTTP_400_BAD_REQUEST)
+
+        products = Product.objects.filter(name__icontains=keyword)
+
+        results = []
+        for product in products:
+            is_genuine, confidence = classifier.classify_review(product.review)
+            results.append({
+                'product_name': product.name,
+                'review': product.review,
+                'is_genuine': is_genuine,
+                'confidence': confidence
+            })
+
+        return Response({'results': results}, status=status.HTTP_200_OK)
