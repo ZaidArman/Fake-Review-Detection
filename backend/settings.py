@@ -164,8 +164,8 @@ SOCIALACCOUNT_PROVIDERS = {
         },
         'OAUTH_PKCE_ENABLED': True,
         'APP': {
-            'client_id': config['CLIENT_ID'],
-            'secret': config['CLIENT_SECRET'],
+            'client_id': config('CLIENT_ID'),
+            'secret': config('CLIENT_SECRET'),
             'key': ''
         }
     }
