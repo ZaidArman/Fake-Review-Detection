@@ -164,8 +164,8 @@ SOCIALACCOUNT_PROVIDERS = {
         },
         'OAUTH_PKCE_ENABLED': True,
         'APP': {
-            'client_id': '939345726120-428m1e0c8823sbolk6qe73iujvc5hr87.apps.googleusercontent.com',
-            'secret': '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',
+            'client_id': config['CLIENT_ID'],
+            'secret': config['CLIENT_SECRET'],
             'key': ''
         }
     }
