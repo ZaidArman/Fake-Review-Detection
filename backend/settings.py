@@ -26,11 +26,15 @@ SECRET_KEY = "django-insecure-1dk2oyj4ykwrw8e5noij-yfyz_+t0932oldpz(h9fp7#+8mvod
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
+CSRF_TRUSTED_ORIGINS = [
+    'https://67d7-119-155-9-159.ngrok-free.app',
+]
+
+GOOGLE_REDIRECT_URL = 'http://127.0.0.1:5173/fakereviewanalyzer'
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'accounts',
     'appbackend',
@@ -42,6 +46,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     'rest_framework',
     'rest_framework.authtoken',
+    'corsheaders',
     'dj_rest_auth',
     'allauth',
     'allauth.account',
@@ -52,6 +57,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -61,6 +67,11 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "backend.urls"
+
+
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:5173",  # Add your frontend URL here
+]
 
 TEMPLATES = [
     {
@@ -141,14 +152,13 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 '''
-
 ACCOUNT_AUTHENTICATION_METHOD = 'username'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'optional'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="zahidu864@gmail.com")
+EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="example@gmail.com")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="admin")
 EMAIL_USE_TLS = True
 MAIL_USE_SSL = True
@@ -170,5 +180,4 @@ SOCIALACCOUNT_PROVIDERS = {
             'key': ''
         }
     }
-}
-'''
+}'''

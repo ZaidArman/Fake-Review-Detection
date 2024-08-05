@@ -31,9 +31,24 @@ class AnalyzeFakeReviews(APIView):
     def post(self, request, *args, **kwargs):
         results = []
         product_title = request.POST.get("keyword")
-        if not product_title:
-            return Response({'error': 'Keyword parameter is missing'}, status=status.HTTP_400_BAD_REQUEST)
-        products = Product.objects.filter(sub_category__subcat_title__icontains=product_title)
+        print("product keyword: ", product_title)
+
+        # Build query based on the provided keyword
+        if product_title:
+            # First, check in product_name
+            products = Product.objects.filter(name__icontains=product_title)
+            if not products.exists():
+                # If not found in product_name, check in sub_category
+                products = Product.objects.filter(sub_category__subcat_title__icontains=product_title)
+                if not products.exists():
+                    # If not found in sub_category, check in category
+                    products = Product.objects.filter(sub_category__category__category__icontains=product_title)
+        
+        if not products.exists():
+            # If no products found
+            return Response({'message': 'No products found for the given keyword.'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Initialize the classifier
         classifier = ReviewClassifier(100)
 
         for product in products:
@@ -50,5 +65,13 @@ class AnalyzeFakeReviews(APIView):
                     'product_price': product.price,
                     'product_link': product.link,
                 })
+            
+        # Ensure results list is populated before sorting and slicing
+        if results:
+            # Sort reviews by confidence in descending order
+            results.sort(key=lambda x: x['confidence'], reverse=True)
+            top_ten = results[:10]
+        else:
+            top_ten = []
 
-        return Response({'results': results}, status=status.HTTP_200_OK)
+        return Response({'top_ten': top_ten}, status=status.HTTP_200_OK)
