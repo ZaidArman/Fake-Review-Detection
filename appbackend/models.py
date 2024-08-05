@@ -21,11 +21,12 @@ class SubCategory(models.Model):
 
 class Product(models.Model):
     sub_category = models.ForeignKey(SubCategory, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=200)
     price = models.PositiveIntegerField()
     image = models.URLField()
-    rating = models.PositiveIntegerField(max_length=100)
+    rating = models.PositiveIntegerField()
     link = models.URLField()
+    review = models.TextField(default='')
 
     def __str__(self):
         return self.name
