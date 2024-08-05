@@ -1,6 +1,5 @@
-/* eslint-disable react/no-unescaped-entities */
 import { useState } from 'react';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 
 const Signup = () => {
@@ -12,6 +11,7 @@ const Signup = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,11 +21,17 @@ const Signup = () => {
       return;
     }
 
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters long');
+      return;
+    }
+
     try {
       const response = await fetch('http://127.0.0.1:8000/api/accounts/create/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-CSRFToken': getCsrfToken(), // Add CSRF token to headers
         },
         body: JSON.stringify({
           username,
@@ -39,9 +45,9 @@ const Signup = () => {
       if (response.ok) {
         setSuccess(true);
         setError('');
+        navigate('/login');  // Redirect to login page
       } else {
         const data = await response.json();
-        console.log(data, 'data')
         setError(data.message || 'Signup failed');
       }
     } catch (error) {
@@ -49,9 +55,15 @@ const Signup = () => {
     }
   };
 
+  const getCsrfToken = () => {
+    const csrfToken = document.cookie.split(';')
+      .map(cookie => cookie.trim())
+      .find(cookie => cookie.startsWith('csrftoken='))
+      ?.split('=')[1];
+    return csrfToken;
+  };
 
   const handleGoogleLogin = () => {
-    console.log('Clicked')
     window.location.href = "https://67d7-119-155-9-159.ngrok-free.app/accounts/google/login/";
   };
 
@@ -74,35 +86,32 @@ const Signup = () => {
           <div>
             <label className="font-medium">Username</label>
             <input
-              type="name"
+              type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
               className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"
             />
-            
           </div>
           <div>
             <label className="font-medium">First Name</label>
             <input
-              type="name"
+              type="text"
               value={first_name}
               onChange={(e) => setFirstname(e.target.value)}
               required
               className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"
             />
-            
           </div>
           <div>
             <label className="font-medium">Last Name</label>
             <input
-              type="name"
+              type="text"
               value={last_name}
               onChange={(e) => setLastname(e.target.value)}
               required
               className="w-full mt-2 px-3 py-2 text-gray-500 bg-transparent outline-none border focus:border-indigo-600 shadow-sm rounded-lg"
             />
-            
           </div>
           <div>
             <label className="font-medium">Email</label>
@@ -150,13 +159,14 @@ const Signup = () => {
               <span>Remember me</span>
             </div>
           </div>
-          <button  className="w-full px-4 py-2 text-white font-medium bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-600 rounded-lg duration-150">
+          <button className="w-full px-4 py-2 text-white font-medium bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-600 rounded-lg duration-150">
             Create an account
           </button>
         </form>
         <button 
-        onClick={handleGoogleLogin}
-        className="w-full flex items-center justify-center gap-x-3 py-2.5 border rounded-lg text-sm font-medium hover:bg-gray-50 duration-150 active:bg-gray-100">
+          onClick={handleGoogleLogin}
+          className="w-full flex items-center justify-center gap-x-3 py-2.5 border rounded-lg text-sm font-medium hover:bg-gray-50 duration-150 active:bg-gray-100"
+        >
           <svg
             className="w-5 h-5"
             viewBox="0 0 48 48"
@@ -177,7 +187,7 @@ const Signup = () => {
                 fill="#FBBC04"
               />
               <path
-                d="M24.48 9.49932C27.9016 9.44641 31.2086 10.7339 33.6866 13.0973L40.5387 6.24523C36.2 2.17101 30.4414 -0.068932 24.48 0.00161733C15.4055 0.00161733 7.10718 5.11644 3.03296 13.2296L11.005 19.4115C12.901 13.7235 18.2187 9.49932 24.48 9.49932Z"
+                d="M24.48 9.49932C27.9369 9.44894 31.2291 10.7712 33.5578 13.2243L40.5136 6.26845C36.2949 2.2676 30.4584 -0.0624126 24.48 0.00162871C15.4056 0.00162871 7.10718 5.11646 3.03296 13.2296L11.0051 19.4115C12.9013 13.6784 18.2275 9.49932 24.48 9.49932Z"
                 fill="#EA4335"
               />
             </g>
@@ -190,12 +200,12 @@ const Signup = () => {
           Continue with Google
         </button>
         <p className="text-center">
-          Already have an account?{" "}
+          Already have an account?{' '}
           <Link
             to="/login"
             className="font-medium text-indigo-600 hover:text-indigo-500"
           >
-            Login
+            Log in
           </Link>
         </p>
       </div>

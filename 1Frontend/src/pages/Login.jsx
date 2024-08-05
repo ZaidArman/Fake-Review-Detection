@@ -47,7 +47,7 @@ const Login = () => {
         {error && <div className="text-red-600">{error}</div>}
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="font-medium">Email</label>
+            <label className="font-medium">Username</label>
             <input
               type="text"
               value={username}
