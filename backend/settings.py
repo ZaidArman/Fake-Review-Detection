@@ -32,6 +32,7 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 GOOGLE_REDIRECT_URL = 'http://127.0.0.1:5173/fakereviewanalyzer'
+RESET_PASSWORD_URL = "http://127.0.0.1:5173/reset-password"
 
 
 # Application definition
@@ -76,7 +77,7 @@ CORS_ALLOWED_ORIGINS = [
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / 'templates'],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -181,3 +182,4 @@ SOCIALACCOUNT_PROVIDERS = {
         }
     }
 }'''
+

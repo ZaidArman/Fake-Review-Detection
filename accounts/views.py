@@ -1,5 +1,6 @@
+from django.conf import settings
 from django.contrib.auth.models import User
-from django.shortcuts import render
+from rest_framework.permissions import AllowAny
 
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import status
@@ -7,7 +8,8 @@ from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .serializers import UserSerializer, MyTokenObtainPairSerializer
+from .serializers import UserSerializer, MyTokenObtainPairSerializer, ResetPasswordEmail, SetNewPasswordSerializer
+from .utils import EmailService
 
 
 class UserCreate(APIView):
@@ -48,3 +50,44 @@ class GoogleRedirectView(APIView):
             "message": "success"
         }
         return Response(response, status=200)
+
+
+class CustomForgetPasswordView(APIView):
+    serializer_class = ResetPasswordEmail
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data['email']
+            user = User.objects.filter(email=email).first()
+            if user:
+                EmailService().send_email(email)
+                return Response({"message": "success"}, status=200)
+            else:
+                return Response({"message": "success"}, status=200)
+        else:
+            return Response(serializer.errors)
+
+
+class SetNewPasswordView(APIView):
+    serializer_class = SetNewPasswordSerializer
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            try:
+                token = Token.objects.get(key=serializer.validated_data['token'])
+            except:
+                return Response({"message": "token is incorrect"})
+            if token:
+                user = token.user
+                new_password = serializer.validated_data['new_password']
+                user.set_password(new_password)
+                user.is_active = True
+                user.save()
+                return Response({"message": "success", }, status=200)
+            return Response({"message": "token not valid", }, status=400)
+        else:
+            return Response(serializer.errors)

@@ -1,6 +1,9 @@
 import json
 
 from django.contrib.auth.models import User
+from django.contrib.auth.password_validation import validate_password, CommonPasswordValidator, \
+    UserAttributeSimilarityValidator
+from django.core.exceptions import ValidationError
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework.authtoken.models import Token
@@ -56,3 +59,23 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         data['is_active'] = self.user.is_active
         data['message'] = 'successful'
         return data
+
+
+class ResetPasswordEmail(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+
+
+class SetNewPasswordSerializer(serializers.Serializer):
+    new_password = serializers.CharField(required=True, min_length=8)
+    token = serializers.CharField(required=True)
+
+    def validate_new_password(self, value):
+        try:
+            validate_password(value)
+        except ValidationError as e:
+            raise serializers.ValidationError(str(e))
+        if CommonPasswordValidator().validate(value):
+            raise serializers.ValidationError('This password is too common.')
+        if UserAttributeSimilarityValidator().validate(value):
+            raise serializers.ValidationError('This password is too similar to personal information.')
+        return value
