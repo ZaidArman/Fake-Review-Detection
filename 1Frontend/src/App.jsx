@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound";
 import ScrollToTop from "./components/ScrollToTop";
 import PrivateRoute from "./components/PrivateRoute"; 
 import Logout from "./pages/Logout"; // Import the Logout component
+import ResetPassword from "./components/dynamic/Popup/ResetPassword";
 
 const App = () => {
   return (
@@ -32,6 +33,7 @@ const App = () => {
           <Route path="/signup" element={<Signup />} />
           <Route path="/logout" element={<Logout />} />
           <Route path="*" element={<NotFound />} />
+          <Route path="/accounts/password_reset/confirm/" element={<ResetPassword />} />
         </Routes>
 
         <Footer />

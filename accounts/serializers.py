@@ -50,6 +50,10 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
     def validate(self, attrs):
         data = super().validate(attrs)
+        
+        if not self.user.is_active:
+            raise serializers.ValidationError("User account is inactive.")
+        
         data['id'] = self.user.id
         data['email'] = self.user.email
         token = Token.objects.get(user=self.user)

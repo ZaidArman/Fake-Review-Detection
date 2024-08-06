@@ -17,12 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-# from accounts.views import GoogleRedirectView
+from accounts.views import GoogleRedirectView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/accounts/", include("accounts.urls")),
     path('accounts/', include('allauth.urls')),
-    # path('accounts/profile/', GoogleRedirectView.as_view()),
+    path('accounts/profile/', GoogleRedirectView.as_view()),
     path('', include('appbackend.urls'))
 ]

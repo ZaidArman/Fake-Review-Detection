@@ -19,13 +19,14 @@ class UserCreate(APIView):
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
-        print(serializer, 'ssss')
         if serializer.is_valid():
             user = serializer.save()
             if user:
+                # Check if token already exists
+                token, created = Token.objects.get_or_create(user=user)
                 return Response(data=serializer.data, status=status.HTTP_200_OK)
         else:
-            email = serializer.data['email']
+            email = serializer.data.get('email', '')
             user = User.objects.filter(email=email).first()
             if user:
                 return Response({"message": "User already exists"}, status=400)
@@ -79,12 +80,15 @@ class SetNewPasswordView(APIView):
         if serializer.is_valid():
             try:
                 token = Token.objects.get(key=serializer.validated_data['token'])
+                print("token: ", token)
             except:
                 return Response({"message": "token is incorrect"})
+            
             if token:
                 user = token.user
                 new_password = serializer.validated_data['new_password']
                 user.set_password(new_password)
+                print("New password: ", new_password)
                 user.is_active = True
                 user.save()
                 return Response({"message": "success", }, status=200)

@@ -27,12 +27,15 @@ SECRET_KEY = "django-insecure-1dk2oyj4ykwrw8e5noij-yfyz_+t0932oldpz(h9fp7#+8mvod
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
+
 CSRF_TRUSTED_ORIGINS = [
+    "http://127.0.0.1:5173",  # Add your frontend URL here
+    "http://localhost:5173",
     'https://67d7-119-155-9-159.ngrok-free.app',
 ]
 
 GOOGLE_REDIRECT_URL = 'http://127.0.0.1:5173/fakereviewanalyzer'
-RESET_PASSWORD_URL = "http://127.0.0.1:5173/reset-password"
+RESET_PASSWORD_URL = "http://127.0.0.1:5173/accounts/password_reset/confirm/"
 
 
 # Application definition
@@ -73,6 +76,8 @@ ROOT_URLCONF = "backend.urls"
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",  # Add your frontend URL here
 ]
+# If you want to allow all origins
+CORS_ALLOW_ALL_ORIGINS = True
 
 TEMPLATES = [
     {
@@ -152,7 +157,7 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-'''
+
 ACCOUNT_AUTHENTICATION_METHOD = 'username'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'optional'
@@ -165,6 +170,7 @@ EMAIL_USE_TLS = True
 MAIL_USE_SSL = True
 EMAIL_PORT = 587
 
+'''
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'SCOPE': [
