@@ -33,6 +33,8 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
     'https://67d7-119-155-9-159.ngrok-free.app',
     'https://01db-119-63-138-164.ngrok-free.app',
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
 ]
 
 GOOGLE_REDIRECT_URL = 'http://127.0.0.1:5173/fakereviewanalyzer'
@@ -77,6 +79,7 @@ ROOT_URLCONF = "backend.urls"
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",  # Add your frontend URL here
     'https://01db-119-63-138-164.ngrok-free.app',
+    'http://127.0.0.1:8000',
 ]
 # If you want to allow all origins
 CORS_ALLOW_ALL_ORIGINS = True
