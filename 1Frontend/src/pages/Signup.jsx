@@ -64,7 +64,7 @@ const Signup = () => {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = "https://67d7-119-155-9-159.ngrok-free.app/accounts/google/login/";
+    window.location.href = "https://01db-119-63-138-164.ngrok-free.app/accounts/google/login/";
   };
 
   return (
